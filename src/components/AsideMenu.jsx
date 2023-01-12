@@ -1,50 +1,53 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Badge } from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
+import { WorkOrdersContext } from "./context/workOrdersContext";
 
-function AsideMenu({ getOrders }) {
+function AsideMenu() {
+  const {
+    pendingPc,
+    pendingImp,
+    myWorkOrders,
+    getPendingPc,
+    getPendingImp,
+    getMyWorkOrders,
+  } = useContext(WorkOrdersContext);
+
   const codeTechnical = "GABYT";
+
   return (
     <ListGroup className="mb-3">
       <ListGroup.Item
         className="d-flex justify-content-between align-items-start"
         role="button"
         variant="success"
-        onClick={() =>
-          getOrders("HTTP://localhost:4444/api/work-orders/pending/PC")
-        }
+        onClick={() => getPendingPc()}
       >
         <span>PC Pendientes</span>
         <Badge bg="primary" pill>
-          14
+          {pendingPc.length}
         </Badge>
       </ListGroup.Item>
       <ListGroup.Item
         className="d-flex justify-content-between align-items-start"
         role="button"
         variant="success"
-        onClick={() =>
-          getOrders("HTTP://localhost:4444/api/work-orders/pending/IMP")
-        }
+        onClick={() => getPendingImp()}
       >
         <span>Impresoras Pendientes</span>
         <Badge bg="primary" pill>
-          14
+          {pendingImp.length}
         </Badge>
       </ListGroup.Item>
       <ListGroup.Item
         className="d-flex justify-content-between align-items-start"
         role="button"
         variant="success"
-        onClick={() =>
-          getOrders(
-            `HTTP://localhost:4444/api/work-orders/technical/${codeTechnical}`
-          )
-        }
+        onClick={() => getMyWorkOrders(codeTechnical)}
       >
         <span>Mis Ordenes Tomadas</span>
         <Badge bg="primary" pill>
-          14
+          {myWorkOrders.length}
         </Badge>
       </ListGroup.Item>
     </ListGroup>

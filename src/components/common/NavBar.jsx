@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 function NavBar() {
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg">
+      <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
         <Container>
           <Navbar.Brand as={Link} to="/">
             GabySystem
