@@ -6,12 +6,18 @@ const WorkOrdersContextProvider = ({ children }) => {
   const [pendingPc, setPendingPc] = useState([]);
   const [pendingImp, setPendingImp] = useState([]);
   const [myWorkOrders, setMyWorkOrders] = useState([]);
-  const [showWorkOrders, setShowWorkOrders] = useState([]);
+  const [workOrders, setWorkOrders] = useState([]);
+
+  const codeTechnical = "GABYT"; // get from user
 
   useEffect(() => {
-    getPendingPc();
-    getPendingImp();
-    getMyWorkOrders("GABYT");
+    const getData = async () => {
+      setPendingPc(await getPendingPc());
+      setPendingImp(await getPendingImp());
+      setMyWorkOrders(await getMyWorkOrders(codeTechnical));
+    };
+
+    getData();
   }, []);
 
   const getPendingPc = async () => {
@@ -19,8 +25,7 @@ const WorkOrdersContextProvider = ({ children }) => {
       "HTTP://localhost:4444/api/work-orders/pending/PC"
     );
     const pendingPc = await pendingPcRes.json();
-    setPendingPc(pendingPc);
-    setShowWorkOrders(pendingPc);
+    return pendingPc;
   };
 
   const getPendingImp = async () => {
@@ -28,8 +33,7 @@ const WorkOrdersContextProvider = ({ children }) => {
       "HTTP://localhost:4444/api/work-orders/pending/IMP"
     );
     const pendingImp = await pendingImpRes.json();
-    setPendingImp(pendingImp);
-    setShowWorkOrders(pendingImp);
+    return pendingImp;
   };
 
   const getMyWorkOrders = async (codeTechnical) => {
@@ -37,20 +41,24 @@ const WorkOrdersContextProvider = ({ children }) => {
       `HTTP://localhost:4444/api/work-orders/technical/${codeTechnical}`
     );
     const myWorkOrders = await myWorkOrdersRes.json();
-    setMyWorkOrders(myWorkOrders);
-    setShowWorkOrders(myWorkOrders);
+    return myWorkOrders;
+  };
+
+  const handleShow = (workOrders) => {
+    setWorkOrders(workOrders);
   };
 
   return (
     <WorkOrdersContext.Provider
       value={{
+        workOrders,
         pendingPc,
         pendingImp,
         myWorkOrders,
         getPendingPc,
         getPendingImp,
         getMyWorkOrders,
-        showWorkOrders,
+        handleShow,
       }}
     >
       {children}

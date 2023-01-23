@@ -11,17 +11,20 @@ function AsideMenu() {
     getPendingPc,
     getPendingImp,
     getMyWorkOrders,
+    handleShow,
   } = useContext(WorkOrdersContext);
 
-  const codeTechnical = "GABYT";
+  const codeTechnical = "GABYT"; // get from user
 
   return (
     <ListGroup className="mb-3">
       <ListGroup.Item
         className="d-flex justify-content-between align-items-start"
-        role="button"
+        action
         variant="success"
-        onClick={() => getPendingPc()}
+        onClick={async () => {
+          handleShow(await getPendingPc());
+        }}
       >
         <span>PC Pendientes</span>
         <Badge bg="primary" pill>
@@ -30,9 +33,11 @@ function AsideMenu() {
       </ListGroup.Item>
       <ListGroup.Item
         className="d-flex justify-content-between align-items-start"
-        role="button"
+        action
         variant="success"
-        onClick={() => getPendingImp()}
+        onClick={async () => {
+          handleShow(await getPendingImp());
+        }}
       >
         <span>Impresoras Pendientes</span>
         <Badge bg="primary" pill>
@@ -41,9 +46,11 @@ function AsideMenu() {
       </ListGroup.Item>
       <ListGroup.Item
         className="d-flex justify-content-between align-items-start"
-        role="button"
+        action
         variant="success"
-        onClick={() => getMyWorkOrders(codeTechnical)}
+        onClick={async () => {
+          handleShow(await getMyWorkOrders(codeTechnical));
+        }}
       >
         <span>Mis Ordenes Tomadas</span>
         <Badge bg="primary" pill>

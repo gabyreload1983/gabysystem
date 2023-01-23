@@ -2,6 +2,7 @@ import Table from "react-bootstrap/Table";
 import WorkOrderDetail from "./WorkOrderDetail";
 
 function WorkOrderList({ workOrders }) {
+  console.log(workOrders.length);
   return (
     <Table striped bordered hover>
       <thead>
@@ -15,9 +16,10 @@ function WorkOrderList({ workOrders }) {
         </tr>
       </thead>
       <tbody>
-        {workOrders.map((w) => (
-          <WorkOrderDetail key={w.nrocompro} workOrder={w} />
-        ))}
+        {workOrders.length > 0 &&
+          workOrders.map((w) => (
+            <WorkOrderDetail key={w.nrocompro} workOrder={w} />
+          ))}
       </tbody>
     </Table>
   );

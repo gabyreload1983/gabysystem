@@ -5,7 +5,7 @@ import { WorkOrdersContext } from "./context/workOrdersContext";
 import WorkOrderList from "./workorder/WorkOrdersList";
 
 function WorkOrders(props) {
-  const { showWorkOrders } = useContext(WorkOrdersContext);
+  const { workOrders } = useContext(WorkOrdersContext);
 
   return (
     <Container fluid>
@@ -14,7 +14,7 @@ function WorkOrders(props) {
           <AsideMenu />
         </Col>
         <Col>
-          <WorkOrderList workOrders={showWorkOrders} />
+          {workOrders.length > 0 && <WorkOrderList workOrders={workOrders} />}
         </Col>
       </Row>
     </Container>
