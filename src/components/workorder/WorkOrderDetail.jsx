@@ -12,6 +12,7 @@ import { FaRegEdit } from "react-icons/fa";
 function WorkOrderDetail({ workOrder }) {
   const [showModal, setShowModal] = useState(false);
   const [diagnosis, setDiagnosis] = useState(workOrder.diagnostico);
+  const [price, setPrice] = useState(workOrder.costo);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
@@ -21,7 +22,7 @@ function WorkOrderDetail({ workOrder }) {
   };
 
   const handleSave = (workOrder) => {
-    console.log(workOrder);
+    console.log(workOrder, diagnosis);
   };
 
   const handleClose = (id) => {
@@ -32,6 +33,14 @@ function WorkOrderDetail({ workOrder }) {
     setDiagnosis(e.target.value);
   };
 
+  const handleCosto = (e) => {
+    setPrice(e.target.value);
+  };
+
+  const takeWOrkOrder = (id) => {
+    console.log(`Tomar orden ${id}`);
+  };
+
   return (
     <>
       <tr key={workOrder.nrocompro}>
@@ -39,12 +48,20 @@ function WorkOrderDetail({ workOrder }) {
         <td>{workOrder.nrocompro}</td>
         <td>{workOrder.nombre}</td>
         <td>{workOrder.prioridad}</td>
-        <td role="button" onClick={handleShowModal}>
-          <FaRegEdit />
-        </td>
+        {workOrder.estado !== 21 ? (
+          <td role="button" onClick={handleShowModal}>
+            <FaRegEdit />
+          </td>
+        ) : (
+          <td></td>
+        )}
         <td>
           {workOrder.estado === 21 && (
-            <Button variant="outline-primary" size="sm">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => takeWOrkOrder(workOrder.nrocompro)}
+            >
               TOMAR
             </Button>
           )}
@@ -102,7 +119,10 @@ function WorkOrderDetail({ workOrder }) {
                     <tr>
                       <td>.ST</td>
                       <td>Mano de Obra</td>
-                      <td>$ {workOrder.costo}</td>
+                      <td>
+                        $
+                        <Form.Control value={price} onChange={handleCosto} />
+                      </td>
                     </tr>
                     {workOrder.products.map((p, index) => {
                       return (
