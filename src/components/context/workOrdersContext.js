@@ -8,40 +8,40 @@ const WorkOrdersContextProvider = ({ children }) => {
   const [myWorkOrders, setMyWorkOrders] = useState([]);
   const [workOrders, setWorkOrders] = useState([]);
 
-  const codeTechnical = "GABYT"; // get from user
+  const technical = "GABYT"; // get from user
 
   useEffect(() => {
     const getData = async () => {
       setPendingPc(await getPendingPc());
       setPendingImp(await getPendingImp());
-      setMyWorkOrders(await getMyWorkOrders(codeTechnical));
+      setMyWorkOrders(await getMyWorkOrders(technical));
     };
 
     getData();
   }, []);
 
   const getPendingPc = async () => {
-    const pendingPcRes = await fetch(
-      "HTTP://localhost:4444/api/work-orders/pending/PC"
+    const data = await fetch(
+      "http://localhost:4444/api/work-orders?status=pending&sector=pc"
     );
-    const pendingPc = await pendingPcRes.json();
-    return pendingPc;
+    const pendingPc = await data.json();
+    return pendingPc.workOrders;
   };
 
   const getPendingImp = async () => {
-    const pendingImpRes = await fetch(
-      "HTTP://localhost:4444/api/work-orders/pending/IMP"
+    const data = await fetch(
+      "http://localhost:4444/api/work-orders?status=pending&sector=imp"
     );
-    const pendingImp = await pendingImpRes.json();
-    return pendingImp;
+    const pendingImp = await data.json();
+    return pendingImp.workOrders;
   };
 
-  const getMyWorkOrders = async (codeTechnical) => {
-    const myWorkOrdersRes = await fetch(
-      `HTTP://localhost:4444/api/work-orders/technical/${codeTechnical}`
+  const getMyWorkOrders = async (technical) => {
+    const data = await fetch(
+      `http://localhost:4444/api/work-orders?status=myWorkOrders&technical=${technical}`
     );
-    const myWorkOrders = await myWorkOrdersRes.json();
-    return myWorkOrders;
+    const myWorkOrders = await data.json();
+    return myWorkOrders.workOrders;
   };
 
   const handleShow = (workOrders) => {
