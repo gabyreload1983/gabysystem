@@ -1,4 +1,5 @@
 const { createContext, useState, useEffect } = require("react");
+const config = require("../../config.json");
 
 export const WorkOrdersContext = createContext();
 
@@ -22,7 +23,7 @@ const WorkOrdersContextProvider = ({ children }) => {
 
   const getPendingPc = async () => {
     const data = await fetch(
-      "http://localhost:4444/api/work-orders?status=pending&sector=pc"
+      `${config.apiEndPoint}/work-orders?status=pending&sector=pc`
     );
     const pendingPc = await data.json();
     return pendingPc.workOrders;
@@ -30,7 +31,7 @@ const WorkOrdersContextProvider = ({ children }) => {
 
   const getPendingImp = async () => {
     const data = await fetch(
-      "http://localhost:4444/api/work-orders?status=pending&sector=imp"
+      `${config.apiEndPoint}/work-orders?status=pending&sector=imp`
     );
     const pendingImp = await data.json();
     return pendingImp.workOrders;
@@ -38,7 +39,7 @@ const WorkOrdersContextProvider = ({ children }) => {
 
   const getMyWorkOrders = async (technical) => {
     const data = await fetch(
-      `http://localhost:4444/api/work-orders?status=myWorkOrders&technical=${technical}`
+      `${config.apiEndPoint}/work-orders?status=myWorkOrders&technical=${technical}`
     );
     const myWorkOrders = await data.json();
     return myWorkOrders.workOrders;
