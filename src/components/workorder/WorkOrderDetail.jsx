@@ -8,6 +8,14 @@ import Table from "react-bootstrap/Table";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { FloatingLabel, Form } from "react-bootstrap";
 import { FaRegEdit } from "react-icons/fa";
+import {
+  getWorkOrderDiagnosis,
+  getWorkOrderState,
+  getWorkOrderTier,
+  getWorkOrderTierBackground,
+  getWorkOrderUbication,
+} from "../../utils";
+import moment from "moment";
 
 function WorkOrderDetail({ workOrder }) {
   const [showModal, setShowModal] = useState(false);
@@ -43,11 +51,14 @@ function WorkOrderDetail({ workOrder }) {
 
   return (
     <>
-      <tr key={workOrder.nrocompro}>
-        <td>{workOrder.ingresado}</td>
+      <tr
+        key={workOrder.nrocompro}
+        className={getWorkOrderTierBackground(workOrder.prioridad)}
+      >
+        <td>{moment(workOrder.ingresado).format("DD/MM/YYYY hh:mm a")}</td>
         <td>{workOrder.nrocompro}</td>
         <td>{workOrder.nombre}</td>
-        <td>{workOrder.prioridad}</td>
+        <td>{getWorkOrderTier(workOrder.prioridad)}</td>
         {workOrder.estado !== 21 ? (
           <td role="button" onClick={handleShowModal}>
             <FaRegEdit />
@@ -77,11 +88,14 @@ function WorkOrderDetail({ workOrder }) {
           <Container>
             <Row>
               <Col xs={6}>
-                <p>ESTADO: {workOrder.estado}</p>
-                <p>DIAGNOSTICO: {workOrder.diag}</p>
-                <p>UBICACION: {workOrder.ubicacion}</p>
-                <p>FECHA INGRESO: {workOrder.ingresado}</p>
-                <p>PRIORIDAD: {workOrder.prioridad}</p>
+                <p>ESTADO: {getWorkOrderState(workOrder.estado)}</p>
+                <p>DIAGNOSTICO: {getWorkOrderDiagnosis(workOrder.diag)}</p>
+                <p>UBICACION: {getWorkOrderUbication(workOrder.ubicacion)}</p>
+                <p>
+                  FECHA INGRESO:{" "}
+                  {moment(workOrder.ingresado).format("DD/MM/YYYY hh:mm a")}
+                </p>
+                <p>PRIORIDAD: {getWorkOrderTier(workOrder.prioridad)}</p>
               </Col>
               <Col xs={6}>
                 <p>TELEFONO: {workOrder.telefono}</p>

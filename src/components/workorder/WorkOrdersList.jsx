@@ -2,7 +2,6 @@ import Table from "react-bootstrap/Table";
 import WorkOrderDetail from "./WorkOrderDetail";
 
 function WorkOrderList({ workOrders }) {
-  console.log(workOrders.length);
   return (
     <Table striped bordered hover>
       <thead>
