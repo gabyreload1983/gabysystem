@@ -16,11 +16,18 @@ import {
   getWorkOrderUbication,
 } from "../../utils";
 import moment from "moment";
+import config from "../../config.json";
+import { useContext } from "react";
+import { WorkOrdersContext } from "./../context/workOrdersContext";
+
+const technical = "GABYT"; //get from login data
 
 function WorkOrderDetail({ workOrder }) {
   const [showModal, setShowModal] = useState(false);
   const [diagnosis, setDiagnosis] = useState(workOrder.diagnostico);
   const [price, setPrice] = useState(workOrder.costo);
+  const { getPendingPc, getPendingImp, handleShow } =
+    useContext(WorkOrdersContext);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
@@ -45,8 +52,33 @@ function WorkOrderDetail({ workOrder }) {
     setPrice(e.target.value);
   };
 
-  const takeWOrkOrder = (id) => {
-    console.log(`Tomar orden ${id}`);
+  const takeWOrkOrder = async (nrocompro) => {
+    const response = await fetch(
+      `${config.apiEndPoint}/work-orders?action=take`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          workOrder: {
+            nrocompro: `${nrocompro}`,
+            tecnico: `${technical}`,
+          },
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      }
+    );
+    const data = await response.json();
+    if (data.status === "success") {
+      if (workOrder.codiart === ".PC") {
+        handleShow(await getPendingPc());
+        console.log(data, "PC");
+      }
+      if (workOrder.codiart === ".IMP") {
+        handleShow(await getPendingImp());
+        console.log(data, "IMP");
+      }
+    }
   };
 
   return (
