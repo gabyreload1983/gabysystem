@@ -19,6 +19,7 @@ import moment from "moment";
 import config from "../../config.json";
 import { useContext } from "react";
 import { WorkOrdersContext } from "./../context/workOrdersContext";
+import Swal from "sweetalert2";
 
 const technical = "GABYT"; //get from login data
 
@@ -52,32 +53,50 @@ function WorkOrderDetail({ workOrder }) {
     setPrice(e.target.value);
   };
 
-  const takeWOrkOrder = async (nrocompro) => {
-    const response = await fetch(
-      `${config.apiEndPoint}/work-orders?action=take`,
-      {
-        method: "PATCH",
-        body: JSON.stringify({
-          workOrder: {
-            nrocompro: `${nrocompro}`,
-            tecnico: `${technical}`,
+  const takeWorkOrder = async (nrocompro) => {
+    try {
+      const response = await Swal.fire({
+        text: `Queres tomar la orden ${nrocompro}?`,
+        showCancelButton: true,
+        confirmButtonText: "Aceptar",
+      });
+      if (!response.isConfirmed) return;
+      const data = await fetch(
+        `${config.apiEndPoint}/work-orders?action=take`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            workOrder: {
+              nrocompro: `${nrocompro}`,
+              tecnico: `${technical}`,
+            },
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
           },
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      }
-    );
-    const data = await response.json();
-    if (data.status === "success") {
-      if (workOrder.codiart === ".PC") {
+        }
+      );
+      const json = await data.json();
+      if (json.status === "success" && workOrder.codiart === ".PC")
         handleShow(await getPendingPc());
-        console.log(data, "PC");
-      }
-      if (workOrder.codiart === ".IMP") {
+      if (json.status === "success" && workOrder.codiart === ".IMP")
         handleShow(await getPendingImp());
-        console.log(data, "IMP");
-      }
+
+      await Swal.fire({
+        toast: true,
+        icon: "success",
+        text: "Orden tomada",
+        position: "top-end",
+        timer: 3000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -85,25 +104,26 @@ function WorkOrderDetail({ workOrder }) {
     <>
       <tr
         key={workOrder.nrocompro}
-        className={getWorkOrderTierBackground(workOrder.prioridad)}
+        className={`${getWorkOrderTierBackground(workOrder.prioridad)}`}
       >
         <td>{moment(workOrder.ingresado).format("DD/MM/YYYY hh:mm a")}</td>
         <td>{workOrder.nrocompro}</td>
         <td>{workOrder.nombre}</td>
         <td>{getWorkOrderTier(workOrder.prioridad)}</td>
-        {workOrder.estado !== 21 ? (
-          <td role="button" onClick={handleShowModal}>
-            <FaRegEdit />
-          </td>
-        ) : (
-          <td></td>
-        )}
+
+        <td
+          role="button"
+          onClick={handleShowModal}
+          className="d-flex justify-content-center align-items-center p-3"
+        >
+          <FaRegEdit />
+        </td>
         <td>
           {workOrder.estado === 21 && (
             <Button
               variant="outline-primary"
               size="sm"
-              onClick={() => takeWOrkOrder(workOrder.nrocompro)}
+              onClick={() => takeWorkOrder(workOrder.nrocompro)}
             >
               TOMAR
             </Button>
@@ -135,81 +155,86 @@ function WorkOrderDetail({ workOrder }) {
                 <p>FALLA: {workOrder.falla}</p>
                 <p>ACCESORIOS: {workOrder.accesorios}</p>
                 <p>TECNICO: {workOrder.tecnico}</p>
-                <FloatingLabel
-                  controlId="floatingTextarea2"
-                  label="Diagnositoc Tecnico"
-                >
-                  <Form.Control
-                    as="textarea"
-                    placeholder="Diagnositoc Tecnico"
-                    style={{ height: "100px" }}
-                    defaultValue={diagnosis}
-                    onChange={handleDiagnosis}
-                  />
-                </FloatingLabel>
+                {workOrder.estado !== 21 && (
+                  <FloatingLabel
+                    controlId="floatingTextarea2"
+                    label="Diagnositoc Tecnico"
+                  >
+                    <Form.Control
+                      as="textarea"
+                      placeholder="Diagnositoc Tecnico"
+                      style={{ height: "100px" }}
+                      defaultValue={diagnosis}
+                      onChange={handleDiagnosis}
+                    />
+                  </FloatingLabel>
+                )}
               </Col>
             </Row>
 
-            <Row>
-              <Col xs={12}>
-                <h3>Articulos</h3>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Codigo</th>
-                      <th>Descripcion</th>
-                      <th>Precio</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>.ST</td>
-                      <td>Mano de Obra</td>
-                      <td>
-                        $
-                        <Form.Control value={price} onChange={handleCosto} />
-                      </td>
-                    </tr>
-                    {workOrder.products.map((p, index) => {
-                      return (
-                        <tr key={`${p.nrocompro}${index}`}>
-                          <td>{p.codart}</td>
-                          <td>{p.descrip}</td>
-                          <td>$ {p.finalPrice}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td colSpan={2}>Total</td>
-                      <td>$ {workOrder.total}</td>
-                    </tr>
-                  </tfoot>
-                </Table>
-              </Col>
-            </Row>
+            {workOrder.estado !== 21 && (
+              <Row>
+                <Col xs={12}>
+                  <h3>Articulos</h3>
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Codigo</th>
+                        <th>Descripcion</th>
+                        <th>Precio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>.ST</td>
+                        <td>Mano de Obra</td>
+                        <td>
+                          <Form.Control value={price} onChange={handleCosto} />
+                        </td>
+                      </tr>
+                      {workOrder.products.map((p, index) => {
+                        return (
+                          <tr key={`${p.nrocompro}${index}`}>
+                            <td>{p.codigo}</td>
+                            <td>{p.descrip}</td>
+                            <td>$ {p.finalPrice}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan={2}>Total</td>
+                        <td>$ {workOrder.total}</td>
+                      </tr>
+                    </tfoot>
+                  </Table>
+                </Col>
+              </Row>
+            )}
           </Container>
         </Modal.Body>
-        <Modal.Footer>
-          <ButtonGroup aria-label="Basic example">
-            <Button
-              variant="warning"
-              onClick={() => handleBreakFree(workOrder.nrocompro)}
-            >
-              Liberar
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => handleClose(workOrder.nrocompro)}
-            >
-              Cerrar
-            </Button>
-            <Button variant="info" onClick={() => handleSave(workOrder)}>
-              Guardar
-            </Button>
-          </ButtonGroup>
-        </Modal.Footer>
+        {workOrder.estado !== 21 && (
+          <Modal.Footer>
+            <ButtonGroup aria-label="Basic example">
+              <Button
+                variant="warning"
+                onClick={() => handleBreakFree(workOrder.nrocompro)}
+              >
+                Liberar
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => handleClose(workOrder.nrocompro)}
+              >
+                Cerrar
+              </Button>
+              <Button variant="info" onClick={() => handleSave(workOrder)}>
+                Guardar
+              </Button>
+            </ButtonGroup>
+          </Modal.Footer>
+        )}
       </Modal>
     </>
   );

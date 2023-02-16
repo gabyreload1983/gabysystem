@@ -10,8 +10,7 @@ function WorkOrderList({ workOrders }) {
           <th>NRO ORDEN</th>
           <th>CLIENTE</th>
           <th>TIER</th>
-          <th>EDITAR</th>
-          <th></th>
+          <th>DETALLE</th>
         </tr>
       </thead>
       <tbody>
