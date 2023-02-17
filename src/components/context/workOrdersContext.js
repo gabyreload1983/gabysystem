@@ -45,6 +45,14 @@ const WorkOrdersContextProvider = ({ children }) => {
     return myWorkOrders.workOrders;
   };
 
+  const getWorkOrder = async (nrocompro) => {
+    const data = await fetch(
+      `${config.apiEndPoint}/work-orders?numberWorkOrder=${nrocompro}`
+    );
+    const workOrder = await data.json();
+    return workOrder.workOrders;
+  };
+
   const handleShow = (workOrders) => {
     setWorkOrders(workOrders);
   };
@@ -59,6 +67,7 @@ const WorkOrdersContextProvider = ({ children }) => {
         getPendingPc,
         getPendingImp,
         getMyWorkOrders,
+        getWorkOrder,
         handleShow,
       }}
     >

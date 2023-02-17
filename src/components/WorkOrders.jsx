@@ -14,7 +14,7 @@ function WorkOrders(props) {
           <AsideMenu />
         </Col>
         <Col>
-          {workOrders.length > 0 && <WorkOrderList workOrders={workOrders} />}
+          {workOrders?.length > 0 && <WorkOrderList workOrders={workOrders} />}
         </Col>
       </Row>
     </Container>
