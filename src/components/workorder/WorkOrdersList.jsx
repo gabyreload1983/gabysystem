@@ -3,7 +3,7 @@ import WorkOrderDetail from "./WorkOrderDetail";
 
 function WorkOrderList({ workOrders }) {
   return (
-    <Table striped bordered hover>
+    <Table striped bordered hover size="sm">
       <thead>
         <tr>
           <th>FECHA</th>

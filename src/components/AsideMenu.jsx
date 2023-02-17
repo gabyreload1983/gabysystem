@@ -18,8 +18,6 @@ function AsideMenu() {
 
   const [search, setSearch] = useState("");
 
-  const codeTechnical = "GABYT"; // get from user
-
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
@@ -83,7 +81,7 @@ function AsideMenu() {
           action
           variant="success"
           onClick={async () => {
-            handleShow(await getMyWorkOrders(codeTechnical));
+            handleShow(await getMyWorkOrders(config.technicalLogin));
           }}
         >
           <span>Mis Ordenes Tomadas</span>

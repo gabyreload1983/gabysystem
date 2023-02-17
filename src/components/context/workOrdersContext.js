@@ -9,13 +9,11 @@ const WorkOrdersContextProvider = ({ children }) => {
   const [myWorkOrders, setMyWorkOrders] = useState([]);
   const [workOrders, setWorkOrders] = useState([]);
 
-  const technical = "GABYT"; // get from user
-
   useEffect(() => {
     const getData = async () => {
       setPendingPc(await getPendingPc());
       setPendingImp(await getPendingImp());
-      setMyWorkOrders(await getMyWorkOrders(technical));
+      setMyWorkOrders(await getMyWorkOrders(config.technicalLogin));
     };
 
     getData();

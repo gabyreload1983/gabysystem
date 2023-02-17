@@ -6,7 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { FloatingLabel, Form } from "react-bootstrap";
+import { FloatingLabel, Form, InputGroup } from "react-bootstrap";
 import { FaRegEdit } from "react-icons/fa";
 import {
   getWorkOrderDiagnosis,
@@ -20,8 +20,6 @@ import config from "../../config.json";
 import { useContext } from "react";
 import { WorkOrdersContext } from "./../context/workOrdersContext";
 import Swal from "sweetalert2";
-
-const technical = "GABYT"; //get from login data
 
 function WorkOrderDetail({ workOrder }) {
   const [showModal, setShowModal] = useState(false);
@@ -64,7 +62,7 @@ function WorkOrderDetail({ workOrder }) {
         });
 
       handleCloseModal();
-      handleShow(await getMyWorkOrders(technical));
+      handleShow(await getMyWorkOrders(config.technicalLogin));
 
       await Swal.fire({
         toast: true,
@@ -116,7 +114,7 @@ function WorkOrderDetail({ workOrder }) {
         });
 
       handleCloseModal();
-      handleShow(await getMyWorkOrders(technical));
+      handleShow(await getMyWorkOrders(config.technicalLogin));
 
       await Swal.fire({
         toast: true,
@@ -171,7 +169,7 @@ function WorkOrderDetail({ workOrder }) {
         });
 
       handleCloseModal();
-      handleShow(await getMyWorkOrders(technical));
+      handleShow(await getMyWorkOrders(config.technicalLogin));
 
       await Swal.fire({
         toast: true,
@@ -214,7 +212,7 @@ function WorkOrderDetail({ workOrder }) {
           body: JSON.stringify({
             workOrder: {
               nrocompro: `${nrocompro}`,
-              tecnico: `${technical}`,
+              tecnico: `${config.technicalLogin}`,
             },
           }),
           headers: {
@@ -326,7 +324,7 @@ function WorkOrderDetail({ workOrder }) {
             {workOrder.estado !== 21 && (
               <Row>
                 <Col xs={12}>
-                  <h3>Articulos</h3>
+                  <h3>DETALLE</h3>
                   <Table striped bordered hover>
                     <thead>
                       <tr>
@@ -339,8 +337,16 @@ function WorkOrderDetail({ workOrder }) {
                       <tr>
                         <td>.ST</td>
                         <td>Mano de Obra</td>
-                        <td>
-                          <Form.Control value={price} onChange={handleCosto} />
+                        <td className="custom-td text-end">
+                          <InputGroup>
+                            <InputGroup.Text>$</InputGroup.Text>
+
+                            <Form.Control
+                              className="text-end"
+                              value={price}
+                              onChange={handleCosto}
+                            />
+                          </InputGroup>
                         </td>
                       </tr>
                       {workOrder.products.map((p, index) => {
@@ -348,7 +354,18 @@ function WorkOrderDetail({ workOrder }) {
                           <tr key={`${p.nrocompro}${index}`}>
                             <td>{p.codigo}</td>
                             <td>{p.descrip}</td>
-                            <td>$ {p.finalPrice}</td>
+
+                            <td className="custom-td text-end">
+                              <InputGroup>
+                                <InputGroup.Text>$</InputGroup.Text>
+
+                                <Form.Control
+                                  className="text-end"
+                                  value={p.finalPrice}
+                                  disabled
+                                />
+                              </InputGroup>
+                            </td>
                           </tr>
                         );
                       })}
@@ -356,7 +373,17 @@ function WorkOrderDetail({ workOrder }) {
                     <tfoot>
                       <tr>
                         <td colSpan={2}>Total</td>
-                        <td>$ {workOrder.total}</td>
+                        <td className="custom-td text-end">
+                          <InputGroup>
+                            <InputGroup.Text>$</InputGroup.Text>
+
+                            <Form.Control
+                              className="text-end bg-dark text-white"
+                              value={workOrder.total}
+                              disabled
+                            />
+                          </InputGroup>
+                        </td>
                       </tr>
                     </tfoot>
                   </Table>
@@ -365,7 +392,7 @@ function WorkOrderDetail({ workOrder }) {
             )}
           </Container>
         </Modal.Body>
-        {workOrder.estado !== 21 && (
+        {workOrder.estado === 22 && (
           <Modal.Footer className="justify-content-between">
             <Row>
               <Col>
