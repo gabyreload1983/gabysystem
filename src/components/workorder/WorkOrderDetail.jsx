@@ -92,8 +92,59 @@ function WorkOrderDetail({ workOrder }) {
     console.log(nrocompro, 23);
   };
 
-  const handleUpdate = (workOrder) => {
+  const handleUpdate = async (workOrder) => {
     console.log(workOrder.nrocompro, diagnosis, price);
+
+    try {
+      const response = await Swal.fire({
+        text: `Guardar modificaciones?`,
+        showCancelButton: true,
+        confirmButtonText: "Aceptar",
+        icon: "warning",
+      });
+      if (!response.isConfirmed) return;
+      const data = await fetch(
+        `${config.apiEndPoint}/work-orders?action=update`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            workOrder: {
+              nrocompro: `${workOrder.nrocompro}`,
+              diagnostico: diagnosis,
+              costo: price,
+            },
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        }
+      );
+      const json = await data.json();
+      if (json.status === "error")
+        return Swal.fire({
+          text: `${json.message}`,
+          icon: "error",
+        });
+
+      handleCloseModal();
+      handleShow(await getMyWorkOrders(technical));
+
+      await Swal.fire({
+        toast: true,
+        icon: "success",
+        text: "Orden actualizada",
+        position: "top-end",
+        timer: 3000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleDiagnosis = (e) => {
