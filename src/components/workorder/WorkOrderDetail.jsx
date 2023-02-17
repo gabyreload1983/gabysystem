@@ -27,22 +27,73 @@ function WorkOrderDetail({ workOrder }) {
   const [showModal, setShowModal] = useState(false);
   const [diagnosis, setDiagnosis] = useState(workOrder.diagnostico);
   const [price, setPrice] = useState(workOrder.costo);
-  const { getPendingPc, getPendingImp, handleShow } =
+  const { getPendingPc, getPendingImp, getMyWorkOrders, handleShow } =
     useContext(WorkOrdersContext);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
-  const handleBreakFree = (id) => {
-    console.log(id);
+  const handleFree = async (nrocompro) => {
+    try {
+      const response = await Swal.fire({
+        text: `Queres liberar la orden ${nrocompro}?`,
+        showCancelButton: true,
+        confirmButtonText: "Aceptar",
+        icon: "warning",
+      });
+      if (!response.isConfirmed) return;
+      const data = await fetch(
+        `${config.apiEndPoint}/work-orders?action=free`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            workOrder: {
+              nrocompro: `${nrocompro}`,
+            },
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        }
+      );
+      const json = await data.json();
+      if (json.status === "error")
+        return Swal.fire({
+          text: `${json.error}?`,
+          icon: "error",
+        });
+
+      handleCloseModal();
+      handleShow(await getMyWorkOrders(technical));
+
+      await Swal.fire({
+        toast: true,
+        icon: "success",
+        text: "Orden liberada",
+        position: "top-end",
+        timer: 3000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleSave = (workOrder) => {
-    console.log(workOrder, diagnosis);
+  const handleCloseRepaired = (nrocompro) => {
+    console.log(nrocompro, 22);
   };
 
-  const handleClose = (id) => {
-    console.log(id);
+  const handleCloseWithoutRepair = (nrocompro) => {
+    console.log(nrocompro, 23);
+  };
+
+  const handleUpdate = (workOrder) => {
+    console.log(workOrder.nrocompro, diagnosis, price);
   };
 
   const handleDiagnosis = (e) => {
@@ -215,24 +266,45 @@ function WorkOrderDetail({ workOrder }) {
           </Container>
         </Modal.Body>
         {workOrder.estado !== 21 && (
-          <Modal.Footer>
-            <ButtonGroup aria-label="Basic example">
-              <Button
-                variant="warning"
-                onClick={() => handleBreakFree(workOrder.nrocompro)}
-              >
-                Liberar
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => handleClose(workOrder.nrocompro)}
-              >
-                Cerrar
-              </Button>
-              <Button variant="info" onClick={() => handleSave(workOrder)}>
-                Guardar
-              </Button>
-            </ButtonGroup>
+          <Modal.Footer className="justify-content-between">
+            <Row>
+              <Col>
+                <ButtonGroup aria-label="Basic example">
+                  <Button
+                    variant="primary"
+                    onClick={() => handleCloseRepaired(workOrder.nrocompro)}
+                  >
+                    Reparado
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() =>
+                      handleCloseWithoutRepair(workOrder.nrocompro)
+                    }
+                  >
+                    Sin Reparacion
+                  </Button>
+                </ButtonGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <ButtonGroup aria-label="Basic example">
+                  <Button
+                    variant="warning"
+                    onClick={() => handleFree(workOrder.nrocompro)}
+                  >
+                    Liberar
+                  </Button>
+                  <Button
+                    variant="info"
+                    onClick={() => handleUpdate(workOrder)}
+                  >
+                    Guardar
+                  </Button>
+                </ButtonGroup>
+              </Col>
+            </Row>
           </Modal.Footer>
         )}
       </Modal>
