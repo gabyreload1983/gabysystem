@@ -59,7 +59,7 @@ function WorkOrderDetail({ workOrder }) {
       const json = await data.json();
       if (json.status === "error")
         return Swal.fire({
-          text: `${json.error}?`,
+          text: `${json.message}`,
           icon: "error",
         });
 
@@ -179,6 +179,11 @@ function WorkOrderDetail({ workOrder }) {
         }
       );
       const json = await data.json();
+      if (json.status === "error")
+        return Swal.fire({
+          text: `${json.message}`,
+          icon: "error",
+        });
       if (json.status === "success" && workOrder.codiart === ".PC")
         handleShow(await getPendingPc());
       if (json.status === "success" && workOrder.codiart === ".IMP")
