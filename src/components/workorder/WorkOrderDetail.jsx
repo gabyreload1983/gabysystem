@@ -297,6 +297,7 @@ function WorkOrderDetail({ workOrder }) {
                   {moment(workOrder.ingresado).format("DD/MM/YYYY hh:mm a")}
                 </p>
                 <p>PRIORIDAD: {getWorkOrderTier(workOrder.prioridad)}</p>
+                <p>VENDEDOR: {workOrder.operador}</p>
               </Col>
               <Col xs={6}>
                 <p>TELEFONO: {workOrder.telefono}</p>
