@@ -392,46 +392,47 @@ function WorkOrderDetail({ workOrder }) {
             )}
           </Container>
         </Modal.Body>
-        {workOrder.estado === 22 && (
-          <Modal.Footer className="justify-content-between">
-            <Row>
-              <Col>
-                <ButtonGroup aria-label="Basic example">
-                  <Button
-                    variant="primary"
-                    onClick={() => handleClose(workOrder.nrocompro, 22)}
-                  >
-                    Reparado
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleClose(workOrder.nrocompro, 23)}
-                  >
-                    Sin Reparacion
-                  </Button>
-                </ButtonGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <ButtonGroup aria-label="Basic example">
-                  <Button
-                    variant="warning"
-                    onClick={() => handleFree(workOrder.nrocompro)}
-                  >
-                    Liberar
-                  </Button>
-                  <Button
-                    variant="info"
-                    onClick={() => handleUpdate(workOrder)}
-                  >
-                    Guardar
-                  </Button>
-                </ButtonGroup>
-              </Col>
-            </Row>
-          </Modal.Footer>
-        )}
+        {workOrder.estado === 22 &&
+          workOrder.tecnico === config.technicalLogin && (
+            <Modal.Footer className="justify-content-between">
+              <Row>
+                <Col>
+                  <ButtonGroup aria-label="Basic example">
+                    <Button
+                      variant="primary"
+                      onClick={() => handleClose(workOrder.nrocompro, 22)}
+                    >
+                      Reparado
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleClose(workOrder.nrocompro, 23)}
+                    >
+                      Sin Reparacion
+                    </Button>
+                  </ButtonGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <ButtonGroup aria-label="Basic example">
+                    <Button
+                      variant="warning"
+                      onClick={() => handleFree(workOrder.nrocompro)}
+                    >
+                      Liberar
+                    </Button>
+                    <Button
+                      variant="info"
+                      onClick={() => handleUpdate(workOrder)}
+                    >
+                      Guardar
+                    </Button>
+                  </ButtonGroup>
+                </Col>
+              </Row>
+            </Modal.Footer>
+          )}
       </Modal>
     </>
   );
